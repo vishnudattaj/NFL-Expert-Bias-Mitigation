@@ -100,3 +100,24 @@ plt.axhline(0, color='black', linewidth=1)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 plt.savefig("SpearmanComparison.png")
+
+positions = ["QB", "RB", "WR", "TE"]
+model_mae = [11.400, 43.302, 40.231, 14.000]
+espn_mae = [12.250, 17.420, 22.983, 9.450]
+
+x = np.arange(len(positions))
+width = 0.35
+
+# Plot MAE Comparison
+plt.figure(figsize=(10, 6))
+plt.bar(x - width/2, model_mae, width, label='Your Model', color='teal', edgecolor='black')
+plt.bar(x + width/2, espn_mae, width, label='ESPN Consensus', color='tomato', edgecolor='black')
+
+plt.ylabel('Mean Absolute Error (Lower is Better)')
+plt.title('Absolute Error Comparison: Model vs. ESPN')
+plt.xticks(x, positions)
+plt.legend()
+
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.tight_layout()
+plt.savefig("MAEComparison.png")
