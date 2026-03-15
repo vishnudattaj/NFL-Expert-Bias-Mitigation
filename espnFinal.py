@@ -1,12 +1,13 @@
 from espn_api.football import League
 import pandas as pd
 
+# obtain all players
 league = League(league_id=1957880705, year=2025)
 players = league.free_agents(size=2000)
 
-
 qbList, rbList, wrList, teList = [], [], [], []
 
+# add players and projected fantasy pts
 for player in players:
     player_data = {
         "player_name": player.name,
@@ -26,6 +27,7 @@ rbDF = pd.DataFrame(rbList)
 wrDF = pd.DataFrame(wrList)
 teDF = pd.DataFrame(teList)
 
+# create final rankings
 qbDF.sort_values(by=["fantasy_pts"], inplace=True, ascending=False)
 rbDF.sort_values(by=["fantasy_pts"], inplace=True, ascending=False)
 wrDF.sort_values(by=["fantasy_pts"], inplace=True, ascending=False)
