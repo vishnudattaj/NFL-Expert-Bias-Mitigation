@@ -95,7 +95,7 @@ def trainModel(trainingDF, trainColumns, pos):
         r2 = r2_score(y_test.iloc[:, i], predictions[:, i])
         print(f"{col} -> R2: {r2:.2f}")
 
-    model.save_model(f"{pos}Model.json")
+    model.save_model(f"models/{pos}Model.json")
 
     return model
 
@@ -118,16 +118,16 @@ yearlyTE = yearlyPlayer[(yearlyPlayer['position'] == "TE")].reset_index(drop=Tru
 
 qbDF = currentDataExtractor(yearlyQB, excludeFeatures, trainModel(yearlyQB, ["passing_yards", "rushing_yards", "rush_touchdown", "pass_touchdown", "interception", "fumble"], "QB"), ["passing_yards", "rushing_yards", "rush_touchdown", "pass_touchdown", "interception", "fumble"], "QB")
 qbDF.drop(columns=["player_id"], inplace=True)
-qbDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("qb_predictions.csv")
+qbDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("rankings/qb_predictions.csv")
 
 rbDF = currentDataExtractor(yearlyRB, excludeFeatures, trainModel(yearlyRB, ["receiving_yards", "rushing_yards", "rush_touchdown", "receptions", "receiving_touchdown", "fumble"], "RB"), ["receiving_yards", "rushing_yards", "rush_touchdown", "receptions", "receiving_touchdown", "fumble"], "RB")
 rbDF.drop(columns=["player_id"], inplace=True)
-rbDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("rb_predictions.csv")
+rbDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("rankings/rb_predictions.csv")
 
 wrDF = currentDataExtractor(yearlyWR, excludeFeatures, trainModel(yearlyWR, ["receiving_yards", "rushing_yards", "rush_touchdown", "receptions", "receiving_touchdown", "fumble"], "WR"), ["receiving_yards", "rushing_yards", "rush_touchdown", "receptions", "receiving_touchdown", "fumble"], "WR")
 wrDF.drop(columns=["player_id"], inplace=True)
-wrDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("wr_predictions.csv")
+wrDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("rankings/wr_predictions.csv")
 
 teDF = currentDataExtractor(yearlyTE, excludeFeatures, trainModel(yearlyTE, ["receiving_yards", "rushing_yards", "rush_touchdown", "receptions", "receiving_touchdown", "fumble"], "TE"), ["receiving_yards", "rushing_yards", "rush_touchdown", "receptions", "receiving_touchdown", "fumble"], "TE")
 teDF.drop(columns=["player_id"], inplace=True)
-teDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("te_predictions.csv")
+teDF.sort_values(by='fantasy_pts', ascending=False).reset_index(drop=True).to_csv("rankings/te_predictions.csv")

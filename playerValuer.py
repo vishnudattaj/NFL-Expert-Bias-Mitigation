@@ -17,10 +17,10 @@ def process_position(model_file, espn_file):
     return undervalued[["player_name", "fantasy_pts_model", "fantasy_pts_espn", "model_rank", "espn_rank", "rank_diff"]], overvalued[["player_name", "fantasy_pts_model", "fantasy_pts_espn", "model_rank", "espn_rank", "rank_diff"]]
 
 positions = {
-    "qb": ("qb_predictions.csv", "espn_qb_predictions.csv"),
-    "rb": ("rb_predictions.csv", "espn_rb_predictions.csv"),
-    "wr": ("wr_predictions.csv", "espn_wr_predictions.csv"),
-    "te": ("te_predictions.csv", "espn_te_predictions.csv")
+    "qb": ("rankings/qb_predictions.csv", "rankings/espn_qb_predictions.csv"),
+    "rb": ("rankings/rb_predictions.csv", "rankings/espn_rb_predictions.csv"),
+    "wr": ("rankings/wr_predictions.csv", "rankings/espn_wr_predictions.csv"),
+    "te": ("rankings/te_predictions.csv", "rankings/espn_te_predictions.csv")
 }
 
 with pd.ExcelWriter("ranking_comparison.xlsx") as writer:

@@ -3,7 +3,7 @@ import xgboost as xgb
 import pandas as pd
 import numpy as np
 
-model_files = ["QBModel.json", "RBModel.json", "WRModel.json", "TEModel.json"]
+model_files = ["models/QBModel.json", "models/RBModel.json", "models/WRModel.json", "models/TEModel.json"]
 positions = ["QB", "RB", "WR", "TE"]
 colors = ["orchid", "tomato", "teal", "goldenrod"]
 
@@ -28,14 +28,14 @@ for pos, file, color in zip(positions, model_files, colors):
         plt.xlabel("Importance (Normalized)")
         plt.grid(axis='x', linestyle='--', alpha=0.5)
         plt.tight_layout()
-        plt.savefig(f"{pos}Graph.png")
+        plt.savefig(f"graphs/{pos}Graph.png")
 
     except Exception as e:
         print(f"Could not plot {pos}: {e}")
 
-modelRanks = ["qb_predictions.csv", "rb_predictions.csv", "wr_predictions.csv", "te_predictions.csv"]
-espnRanks = ["espn_qb_predictions.csv", "espn_rb_predictions.csv", "espn_wr_predictions.csv", "espn_te_predictions.csv"]
-actualRanks = ["espn_qb_final.csv", "espn_rb_final.csv", "espn_wr_final.csv", "espn_te_final.csv"]
+modelRanks = ["rankings/qb_predictions.csv", "rankings/rb_predictions.csv", "rankings/wr_predictions.csv", "rankings/te_predictions.csv"]
+espnRanks = ["rankings/espn_qb_predictions.csv", "rankings/espn_rb_predictions.csv", "rankings/espn_wr_predictions.csv", "rankings/espn_te_predictions.csv"]
+actualRanks = ["rankings/espn_qb_final.csv", "rankings/espn_rb_final.csv", "rankings/espn_wr_final.csv", "rankings/espn_te_final.csv"]
 colors = [["orchid", "tomato"], ["teal", "goldenrod"], ["navy", "crimson"], ["limegreen", "sienna"]]
 positions = [["QB", 20], ["RB", 50], ["WR", 60], ["TE", 20]]
 
@@ -77,7 +77,7 @@ for model, espn, actual, colored, positioned in zip(modelRanks, espnRanks, actua
     plt.legend()
     plt.grid(axis='y', linestyle=':', alpha=0.5)
     plt.tight_layout()
-    plt.savefig(f"{position}ErrorAnalysis.png")
+    plt.savefig(f"graphs/{position}ErrorAnalysis.png")
 
 positions = ["QB", "RB", "WR", "TE"]
 model_spearman = [0.065, 0.452, 0.438, 0.481]
@@ -99,7 +99,29 @@ ax.legend()
 plt.axhline(0, color='black', linewidth=1)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
-plt.savefig("SpearmanComparison.png")
+plt.savefig("graphs/SpearmanComparison.png")
+
+model_spearman = [0.065, 0.525, 0.446, 0.481]
+espn_spearman = [-0.232, 0.696, 0.367, 0.018]
+
+x = np.arange(len(positions))
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(10, 6))
+rects1 = ax.bar(x - width/2, model_spearman, width, label='Your Model', color='teal', edgecolor='black')
+rects2 = ax.bar(x + width/2, espn_spearman, width, label='ESPN Consensus', color='tomato', edgecolor='black')
+
+ax.set_ylabel('Spearman Correlation (Higher is Better)')
+ax.set_title('Injury Accounted Ordinal Ranking Accuracy: Model vs. ESPN')
+ax.set_xticks(x)
+ax.set_xticklabels(positions)
+ax.legend()
+
+plt.axhline(0, color='black', linewidth=1)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.tight_layout()
+plt.savefig("graphs/ErrorAccountedSpearmanComparison.png")
+
 
 positions = ["QB", "RB", "WR", "TE"]
 model_mae = [11.400, 43.302, 40.231, 14.000]
@@ -120,4 +142,25 @@ plt.legend()
 
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
-plt.savefig("MAEComparison.png")
+
+ymin, ymax = plt.gca().get_ylim()
+
+plt.savefig("graphs/MAEComparison.png")
+
+model_mae = [11.400, 26.721, 24.519, 14.000]
+espn_mae = [12.250, 14.740, 22.983, 9.450]
+
+plt.figure(figsize=(10, 6))
+plt.bar(x - width/2, model_mae, width, label='Your Model', color='teal', edgecolor='black')
+plt.bar(x + width/2, espn_mae, width, label='ESPN Consensus', color='tomato', edgecolor='black')
+
+plt.ylabel('Mean Absolute Error (Lower is Better)')
+plt.title('Injury Accounted Absolute Error Comparison: Model vs. ESPN')
+plt.xticks(x, positions)
+plt.legend()
+
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.ylim(0, ymax)
+plt.yticks(range(0, int(ymax)+1, 10))
+plt.tight_layout()
+plt.savefig("graphs/ErrorAccountedMAEComparison.png")
