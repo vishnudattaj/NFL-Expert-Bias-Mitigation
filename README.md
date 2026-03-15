@@ -32,14 +32,24 @@ The project is composed of five main scripts:
 - Uses **Mean Absolute Error** and **Spearman's Rank Correlation** to analyze the rankings.  
 - Prints results along with the top 5 misses of both ESPN and the XGBoost model.  
 
+### `outlierAdjustedResultsViewer.py`  
+- Compares both the **model-generated rankings** and **ESPN’s rankings** with the **final rankings**.  
+- Uses **Mean Absolute Error** and **Spearman's Rank Correlation** to analyze the rankings.  
+- Removes 7 key NFL players who missed the entire season due to injury.  
+
+### `modelPlot.py`  
+- Creates numerous plots to visually interpret data
+
 ---
 
 ## Outputs  
 
-- `*_predictions.csv` → Model-based predictions for each position.  
-- `espn_*_predictions.csv` → ESPN projections for each position.
-- `espn_*_final.csv` → Final rankings for each position.  
-- `ranking_comparison.xlsx` → Combined comparison, split into undervalued/overvalued players.  
+- `rankings/*_predictions.csv` → Model-based predictions for each position.  
+- `rankings/espn_*_predictions.csv` → ESPN projections for each position.
+- `rankings/espn_*_final.csv` → Final rankings for each position.  
+- `rankings/ranking_comparison.xlsx` → Combined comparison, split into undervalued/overvalued players.  
+- `graphs/*.png` → Graphs to visually interpret models
+- `models/*.json` → Model stored as JSON object
 
 ---
 
@@ -51,6 +61,7 @@ The project is composed of five main scripts:
 - **scikit-learn** – training & evaluation utilities  
 - **espn_api** – fetch ESPN projections
 - **SciPy** - calculate using Spearman's formula
+- **MatplotLib** - create visual data
 
 ---
 
