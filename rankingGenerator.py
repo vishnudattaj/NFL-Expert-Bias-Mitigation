@@ -7,10 +7,6 @@ def pastFeatures(featureList, excludeList, dataFrame, draft):
     dataFrame = pd.merge(dataFrame.drop(columns=["draft_year"]), draft, on='player_id', how='left')
     # calculate experience
     dataFrame['experience'] = dataFrame['season'] - dataFrame['draft_year']
-    # calculate career max stats
-    dataFrame['career_max_receiving_yards'] = dataFrame.groupby('player_id')['receiving_yards'].cummax()
-    dataFrame['career_max_rushing_yards'] = dataFrame.groupby('player_id')['rushing_yards'].cummax()
-    dataFrame['career_max_passing_yards'] = dataFrame.groupby('player_id')['passing_yards'].cummax()
 
     # creates lagged features (lags up to 3 years)
     for feature in featureList:
@@ -18,6 +14,11 @@ def pastFeatures(featureList, excludeList, dataFrame, draft):
             dataFrame[f"Past-1-{feature}"] = dataFrame.groupby('player_id')[feature].shift(1)
             dataFrame[f"Past-2-{feature}"] = dataFrame.groupby('player_id')[feature].shift(2)
             dataFrame[f"Past-3-{feature}"] = dataFrame.groupby('player_id')[feature].shift(3)
+
+    # calculate career max stats
+    dataFrame['career_max_receiving_yards'] = dataFrame.groupby('player_id')['Past-1-receiving_yards'].cummax()
+    dataFrame['career_max_rushing_yards'] = dataFrame.groupby('player_id')['Past-1-rushing_yards'].cummax()
+    dataFrame['career_max_passing_yards'] = dataFrame.groupby('player_id')['Past-1-passing_yards'].cummax()
 
     # drop columns that are all na
     dataFrame.dropna(axis=1, how='all', inplace=True)
@@ -46,6 +47,11 @@ def currentDataExtractor(dataFrame, excludeList, model, trainColumns, playerType
                 df_2024[f"Past-2-{feature}"] = df_2024[f"Past-1-{feature}"]
 
             df_2024[f"Past-1-{feature}"] = df_2024[feature]
+
+    # calculate career max stats
+    df_2024['career_max_receiving_yards'] = df_2024.groupby('player_id')['Past-1-receiving_yards'].cummax()
+    df_2024['career_max_rushing_yards'] = df_2024.groupby('player_id')['Past-1-rushing_yards'].cummax()
+    df_2024['career_max_passing_yards'] = df_2024.groupby('player_id')['Past-1-passing_yards'].cummax()
 
     # predict using model
     X = df_2024[model.feature_names_in_]
@@ -98,7 +104,7 @@ def trainModel(trainingDF, trainColumns, pos):
     )
 
     # train model
-    model.fit(X_train, y_train ,verbose=1)
+    model.fit(X_train, y_train, verbose=1)
 
     predictions = model.predict(X_test)
 

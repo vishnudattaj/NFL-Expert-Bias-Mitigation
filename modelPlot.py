@@ -2,112 +2,58 @@ import matplotlib.pyplot as plt
 import xgboost as xgb
 import pandas as pd
 import numpy as np
+import os
 
-# import ML models
+# better quality
+plt.rcParams['figure.dpi'] = 300
+plt.rcParams['savefig.dpi'] = 600
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['font.size'] = 12
+
 model_files = ["models/QBModel.json", "models/RBModel.json", "models/WRModel.json", "models/TEModel.json"]
 positions = ["QB", "RB", "WR", "TE"]
 colors = ["orchid", "tomato", "teal", "goldenrod"]
 
-# assign color and position to model file
-for pos, file, color in zip(positions, model_files, colors):
+fig, axes = plt.subplots(2, 2, figsize=(14, 10), constrained_layout=True)
+axes_flat = axes.flatten()
+
+for i, (pos, file, color) in enumerate(zip(positions, model_files, colors)):
+    ax = axes_flat[i]
     model = xgb.XGBRegressor()
-    model.load_model(file)
 
     try:
-        # obtain importance of features
+        model.load_model(file)
         importances = model.feature_importances_
-        # obtain list of features
+
         try:
             features = model.feature_names_in_
         except AttributeError:
             features = [f"Feature {i}" for i in range(len(importances))]
 
-        # create dataframe with 10 most important features
         df = pd.DataFrame({'Feature': features, 'Importance': importances})
+        # Sort and take top 10
         df = df.sort_values(by='Importance', ascending=True).tail(10)
 
-        # create plot
-        plt.figure(figsize=(10, 8))
-        plt.barh(df['Feature'], df['Importance'], color=color, edgecolor='black')
+        # Plotting on the specific subplot axis
+        ax.barh(df['Feature'], df['Importance'], color=color, edgecolor='black')
 
-        plt.title(f"{pos} Feature Importance")
-        plt.xlabel("Importance (Normalized)")
-        plt.grid(axis='x', linestyle='--', alpha=0.5)
-        plt.tight_layout()
-        plt.savefig(f"graphs/{pos}Graph.png")
+        # Styling each panel
+        ax.set_title(f"{pos} Feature Importance", fontsize=16, fontweight='bold')
+        ax.set_xlabel("Importance (Normalized)", fontsize=10)
+        ax.grid(axis='x', linestyle='--', alpha=0.4)
+
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
 
     except Exception as e:
         print(f"Could not plot {pos}: {e}")
+        ax.text(0.5, 0.5, f"Error loading {pos}", ha='center')
 
-# import rankings
-modelRanks = ["rankings/qb_predictions.csv", "rankings/rb_predictions.csv", "rankings/wr_predictions.csv",
-              "rankings/te_predictions.csv"]
-espnRanks = ["rankings/espn_qb_predictions.csv", "rankings/espn_rb_predictions.csv", "rankings/espn_wr_predictions.csv",
-             "rankings/espn_te_predictions.csv"]
-actualRanks = ["rankings/espn_qb_final.csv", "rankings/espn_rb_final.csv", "rankings/espn_wr_final.csv",
-               "rankings/espn_te_final.csv"]
-# positions contains position and limiter value
-positions = [["QB", 20], ["RB", 50], ["WR", 60], ["TE", 20]]
-
-# zip rankings with colors and positional values
-for model, espn, actual, positioned in zip(modelRanks, espnRanks, actualRanks, positions):
-    position = positioned[0]
-    limit = positioned[1]
-    color1 = "teal"
-    color2 = "tomato"
-
-    modelFile = pd.read_csv(model).head(limit)
-    espnFile = pd.read_csv(espn)
-    actualFile = pd.read_csv(actual)
-
-    # adding one to index makes rank begin from 1
-    modelFile["modelRank"] = modelFile.index + 1
-    espnFile["espnRank"] = espnFile.index + 1
-    actualFile["actualRank"] = actualFile.index + 1
-
-    # only compare players in all three files
-    players = modelFile.merge(espnFile, on="player_name", how="inner")
-    players = players.merge(actualFile, on="player_name", how="inner")
-
-    # find error
-    players["modelError"] = players["modelRank"] - players["actualRank"]
-    players["espnError"] = players["espnRank"] - players["actualRank"]
-
-    # Calculate counts within +/- 10
-    model_hits = len(players[abs(players["modelError"]) <= 10])
-    espn_hits = len(players[abs(players["espnError"]) <= 10])
-    total_players = len(players)
-
-    # create plots
-    plt.figure(figsize=(8, 6))
-
-    plt.scatter(players["actualRank"], players["modelError"], color=color1, label="Model Error", alpha=0.6,
-                edgecolors='w', s=50)
-    plt.scatter(players["actualRank"], players["espnError"], color=color2, label="ESPN Error", alpha=0.6,
-                edgecolors='w', s=50)
-
-    plt.axhline(0, color="black", linestyle="--", linewidth=1.5, label="Perfect Prediction")
-
-    plt.xlabel("Actual Season Rank")
-    plt.ylabel("Prediction Error (Ranks)")
-    plt.title(f"{position}: Ranking Error Comparison")
-
-    plt.axhspan(-10, 10, facecolor='gray', alpha=0.1, label="High Accuracy Zone (±10)")
-
-    # Add text box for summary statistics
-    stats_text = (f"Model Hits (±10): {model_hits}/{total_players}\n"
-                  f"ESPN Hits (±10): {espn_hits}/{total_players}")
-    plt.text(0.75, 0.98, stats_text, transform=plt.gca().transAxes,
-             fontsize=10, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
-
-    plt.legend()
-    plt.grid(axis='y', linestyle=':', alpha=0.5)
-    plt.tight_layout()
-    plt.savefig(f"graphs/{position}ErrorAnalysis.png")
+plt.savefig("graphs/Combined_Position_Importance.svg", bbox_inches='tight', facecolor='white')
 
 # add spearman data
 positions = ["QB", "RB", "WR", "TE"]
-model_spearman = [0.065, 0.452, 0.438, 0.481]
+model_spearman = [0.039, 0.532, 0.363, 0.247]
 espn_spearman = [-0.232, 0.692, 0.367, 0.018]
 
 x = np.arange(len(positions))
@@ -130,7 +76,7 @@ plt.tight_layout()
 plt.savefig("graphs/SpearmanComparison.png")
 
 # spearman data accounting for injuries
-model_spearman = [0.065, 0.525, 0.446, 0.481]
+model_spearman = [0.039, 0.597, 0.326, 0.247]
 espn_spearman = [-0.232, 0.696, 0.367, 0.018]
 
 x = np.arange(len(positions))
@@ -153,7 +99,7 @@ plt.savefig("graphs/ErrorAccountedSpearmanComparison.png")
 
 # mae data
 positions = ["QB", "RB", "WR", "TE"]
-model_mae = [11.400, 43.302, 40.231, 14.000]
+model_mae = [10.105, 30.930, 37.208, 13.579]
 espn_mae = [12.250, 17.420, 22.983, 9.450]
 
 x = np.arange(len(positions))
@@ -177,7 +123,7 @@ ymin, ymax = plt.gca().get_ylim()
 plt.savefig("graphs/MAEComparison.png")
 
 # MAE data accounting for injuries
-model_mae = [11.400, 26.721, 24.519, 14.000]
+model_mae = [10.105, 26.233, 27.712, 13.579]
 espn_mae = [12.250, 14.740, 22.983, 9.450]
 
 plt.figure(figsize=(10, 6))
@@ -191,6 +137,6 @@ plt.legend()
 
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.ylim(0, ymax)
-plt.yticks(range(0, int(ymax)+1, 10))
+plt.yticks(range(0, int(ymax)+1, 5))
 plt.tight_layout()
 plt.savefig("graphs/ErrorAccountedMAEComparison.png")

@@ -3,7 +3,7 @@ from scipy.stats import spearmanr
 
 # function filters out injured player and obtains MAE
 def get_metrics(projDF, actualDF, topN):
-    zeroGamesPlayed = ["Joe Mixon", "Ezekiel Elliott", "Gus Edwards", "Cordarrelle Patterson", "Brandon Aiyuk", "Tank Dell", "Diontae Johnson"]
+    zeroGamesPlayed = ["Joe Mixon", "Ezekiel Elliott", "Gus Edwards", "Cordarrelle Patterson", "Brandon Aiyuk", "Tank Dell"]
     # removes players in zeroGamesPlayed list from dataframe
     projDF = projDF[~projDF["player_name"].isin(zeroGamesPlayed)].head(topN)[["player_name"]].copy()
     actualDF = actualDF[["player_name"]].copy()
