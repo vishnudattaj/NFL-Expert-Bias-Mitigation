@@ -17,6 +17,8 @@ This project combines player historical stats, ESPN projections, and custom ML m
     - Algorithmic models proved less susceptible to "narrative-driven noise" and media hype that often skew human-adjusted rankings.
     - Demonstrates that machine learning can serve as a cost-effective, objective supplement to traditional expert analysis in sports forecasting.
 
+---
+
 ## How It Works  
 
 The project is composed of five main scripts:  
