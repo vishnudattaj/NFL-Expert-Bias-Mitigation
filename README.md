@@ -5,6 +5,18 @@ This project combines player historical stats, ESPN projections, and custom ML m
 
 ---
 
+## Research
+
+### `Vishnu_Jayanti_Fantasy_Football_Research_Paper.pdf`
+- **Objective**: Investigates whether "pure" algorithmic models can mitigate cognitive biases inherent in "hybrid" expert-adjusted projections like those from ESPN.
+- **Methodology**: Develops four position-specific **XGBoost regression models** trained on NFL data spanning from 2013 to 2023.
+- **Feature Engineering**: Utilizes over **1,900 unique variables**, including custom "career-max" indicators and lagged temporal inputs to identify player talent ceilings and performance trajectories.
+- **Evaluation**: Benchmarks model performance against ESPN's preseason projections using **Mean Absolute Error (MAE)** for ranking distance and **Spearman’s Rank Correlation Coefficient (SRCC)** for ordinal ranking integrity.
+- **Key Findings**:
+    - The "pure" ML approach outperformed industry experts in projecting **Quarterbacks (QB)** and **Tight Ends (TE)**.
+    - Algorithmic models proved less susceptible to "narrative-driven noise" and media hype that often skew human-adjusted rankings.
+    - Demonstrates that machine learning can serve as a cost-effective, objective supplement to traditional expert analysis in sports forecasting.
+
 ## How It Works  
 
 The project is composed of five main scripts:  
