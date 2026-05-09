@@ -1,4 +1,4 @@
-# Fantasy Football Ranking Generator  
+# NFL Expert Bias Mitigation  
 
 A machine learning–powered tool for generating, comparing, and evaluating fantasy football player rankings.  
 This project combines player historical stats, ESPN projections, and custom ML models to identify undervalued and overvalued players for the upcoming season.  
