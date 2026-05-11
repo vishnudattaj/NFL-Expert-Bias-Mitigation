@@ -1,7 +1,9 @@
 # NFL Expert Bias Mitigation  
 
 A machine learning–powered tool for generating, comparing, and evaluating fantasy football player rankings.  
-This project combines player historical stats, ESPN projections, and custom ML models to identify undervalued and overvalued players for the upcoming season.  
+This project combines player historical stats, ESPN projections, and custom ML models to identify undervalued and overvalued players for the upcoming season.
+
+This project is the functional implementation of my research paper, "Beyond the Expert: An Algorithmic Approach to Correcting Expert Bias in Fantasy Football Projections," which is published in the [Wharton Sports Analytics Journal] (https://wsb.wharton.upenn.edu/wharton-sports-analytics-journal/2026-spring-edition/).
 
 ---
 
